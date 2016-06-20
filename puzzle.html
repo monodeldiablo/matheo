@@ -1,0 +1,164 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Math Puzzle!</title>
+  <meta name="description" content="Learn math with puzzles!">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="matheo.bootstrap.css">
+  <style>
+body {
+}
+
+table {
+  table-layout: fixed;
+  background-color: #000000;
+}
+
+td {
+  background-color: #ffffff;
+  text-align: center;
+  vertical-align: middle;
+  border: 2px solid #000000;
+}
+
+#equation, #controls {
+  text-align: center;
+}
+
+#panel {
+  text-align: center;
+}
+  </style>
+</head>
+
+<body class="bg-info">
+  <div class="container-fluid">
+    <div class="row">
+      <div id="main" class="col-md-9">
+	<table id="overlay"></table>
+      </div>
+      <div id="panel" class="col-md-3 bg-info">
+	<p id="equation"></p>
+	<div id="controls">
+	  <label for="difficulty">Number of pieces: <span id="difficulty-value">3</span></label>
+	  <input id="difficulty" type="range" min="1" max="20" value="3" />
+	  <label for="range">Maximum sum: <span id="range-value">10</span></label>
+	  <input id="range" type="range" min="3" max="100" value="10" />
+	</div>
+	<button type="button" id="restart" class="btn btn-primary btn-lg">New Game</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script>
+//var width = 1024;
+//var height = 800;
+var width = $('#main').width();
+var height = $(document).height();
+var font_height = 300;
+
+//var url = "http://loremflickr.com/" + width + "/" + height + "/landscape";
+//var url = "http://p-hold.com/" + width + "/" + height;
+//var url = "http://unsplash.it/" + width + "/" + height + "/?random";
+var url = "http://unsplash.it/" + width + "/" + height + "/?image=75";
+
+difficulty = 3;
+range = 10;
+
+incomplete = [];
+complete = [];
+
+function num_in_range(x) {
+  return Math.floor(Math.random() * (x + 1));
+}
+
+function random_item(arr) {
+  return arr[num_in_range(arr.length - 1)];
+}
+
+function show_equation() {
+  if (complete.length == difficulty * difficulty) {
+    $('#equation').text("Done!");
+    $('#equation').addClass('text-success');
+  }
+  else {
+    var id = random_item(incomplete);
+    var value = parseInt($('#' + id).text());
+    var x = num_in_range(value);
+    var y = value - x;
+    $('#equation').text('' + x + ' + ' + y);
+    $('#equation').removeClass('text-success');
+  }
+}
+
+function on_tile_clicked(evt) {
+  var tile = evt.target;
+  var answer = eval($('#equation').text());
+  var id = parseInt($(tile).attr('id'));
+
+  if (parseInt($(tile).text()) == answer) {
+    complete.push(id);
+    incomplete = incomplete.filter(function(x) {return x != id;});
+    $('#' + id).text('');
+    $('#' + id).css('background', "url('')");
+    $('#' + id).css('border', "none");
+    $('#equation').addClass('text-success');
+    setTimeout(show_equation, 2000);
+  }
+  else {
+    $('#equation').addClass('text-danger');
+  }
+} 
+
+function setup() {
+  complete = [];
+  incomplete = [];
+
+  difficulty = parseInt($('#difficulty').val());
+  range = parseInt($('#range').val());
+
+  $('#difficulty-value').text(difficulty * difficulty);
+  $('#range-value').text(range);
+
+  $('#overlay').replaceWith("<table id='overlay'></table>");
+  $('#overlay').width(width);
+  $('#overlay').height(height);
+  $('#overlay').css('background-image', "url('" + url + "')");
+  $('#panel').height(height);
+
+  var row_height = height / difficulty;
+  var label_height = font_height / difficulty;
+
+  for (i = 0; i < difficulty; i++) {
+    $('table').append("<tr id='row-" + i + "'></tr>");
+
+    for (j = 0; j < difficulty; j++) {
+      var id = i * difficulty + j;
+      var num = num_in_range(range);
+      $('table tr#row-' + i).append("<td id=" + id + ">" + num + "</td>");
+      incomplete.push(id);
+    }
+  }
+
+  $('table').css('font-size', '' + label_height + 'px');
+  $('tr').css('height', '' + row_height + 'px');
+  $('td').click(on_tile_clicked);
+
+  $('#equation').css('font-size', '' + font_height/4 + 'px');
+  $('#equation').text("Let's start!");
+  setTimeout(show_equation, 2000);
+}
+
+$('#difficulty').change(setup);
+$('#range').change(setup);
+$('#restart').click(setup);
+$(document).ready(setup);
+  </script>
+</body>
+</html>
