@@ -63,9 +63,9 @@ var width = $('#main').width();
 var height = $(document).height();
 var font_height = 300;
 
-//var url = "http://loremflickr.com/" + width + "/" + height + "/landscape";
+var url = "http://loremflickr.com/" + width + "/" + height + "/landscape";
 //var url = "http://p-hold.com/" + width + "/" + height;
-var url = "http://unsplash.it/" + width + "/" + height + "/?random";
+//var url = "http://unsplash.it/" + width + "/" + height + "/?random";
 
 difficulty = 3;
 range = 10;
@@ -84,6 +84,7 @@ function random_item(arr) {
 function show_equation() {
   if (complete.length == difficulty * difficulty) {
     $('#equation').text("Done!");
+    $('#equation').removeClass('text-danger');
     $('#equation').addClass('text-success');
   }
   else {
@@ -92,6 +93,7 @@ function show_equation() {
     var x = num_in_range(value);
     var y = value - x;
     $('#equation').text('' + x + ' + ' + y);
+    $('#equation').removeClass('text-danger');
     $('#equation').removeClass('text-success');
   }
 }
