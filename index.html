@@ -128,7 +128,7 @@ function setup() {
   $('#overlay').replaceWith("<table id='overlay'></table>");
   $('#overlay').width(width);
   $('#overlay').height(height);
-  $('#overlay').css('background-image', "url('" + url + "')");
+  $('#overlay').css('background-image', "url('" + url + "?random=" + num_in_range(10000) + "')");
   $('#panel').height(height);
 
   var row_height = height / difficulty;
